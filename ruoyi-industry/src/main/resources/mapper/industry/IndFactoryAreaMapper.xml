@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.industry.mapper.IndFactoryAreaMapper">
+    
+    <resultMap type="IndFactoryArea" id="IndFactoryAreaResult">
+        <result property="id"    column="id"    />
+        <result property="factoryNo"    column="factory_no"    />
+        <result property="areaNo"    column="area_no"    />
+        <result property="sectionName"    column="section_name"    />
+        <result property="startRealSlotNo"    column="start_real_slot_no"    />
+        <result property="endRealSlotNo"    column="end_real_slot_no"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectIndFactoryAreaVo">
+        select id, factory_no, area_no, section_name, start_real_slot_no, end_real_slot_no, status, create_by, create_time, update_by, update_time from ind_factory_area
+    </sql>
+
+    <select id="selectIndFactoryAreaList" parameterType="IndFactoryArea" resultType="com.ruoyi.industry.domain.IndFactoryArea">
+        SELECT DISTINCT
+            a.PotRommID AS factoryNo,
+            a.SectionID AS areaNo,
+            a.PotIDInPotRoom AS slotNo,
+            a.RealPotID AS realSlotNo,
+            CONVERT ( VARCHAR ( 10 ), a.PotRommID ) + '厂房' + CONVERT ( VARCHAR ( 10 ), a.SectionID ) + '区' AS sectionName
+        FROM
+            PotRoom a
+        LEFT JOIN ind_user_pot_room f ON a.PotRommID = f.pot_room_id
+            AND a.SectionID = f.section_id
+        LEFT JOIN sys_user u ON u.user_id = f.user_id
+        <where>
+            <if test="factoryNo != null "> and a.PotRommID = ${factoryNo}</if>
+            <if test="areaNo != null "> and a.SectionID = ${areaNo}</if>
+            <if test="sectionName != null  and sectionName != ''"> and CONVERT ( VARCHAR ( 10 ), a.PotRommID ) + '厂房' + CONVERT ( VARCHAR ( 10 ), a.SectionID ) + '区' LIKE concat('%', #{sectionName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectIndFactoryAreaListByUserId" parameterType="long" resultType="com.ruoyi.industry.domain.IndFactoryArea">
+        SELECT DISTINCT
+            a.PotRommID AS factoryNo,
+            a.SectionID AS areaNo,
+            CONVERT ( VARCHAR ( 10 ), a.PotRommID ) + '厂房' + CONVERT ( VARCHAR ( 10 ), a.SectionID ) + '区' AS sectionName
+        FROM
+            PotRoom a
+            LEFT JOIN ind_user_pot_room f ON a.PotRommID = f.pot_room_id
+            AND a.SectionID = f.section_id
+            LEFT JOIN sys_user u ON u.user_id = f.user_id
+        WHERE
+            u.user_id = ${userId}
+    </select>
+
+    <select id="selectIndFactoryAreaListAll" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT DISTINCT
+            a.PotRommID AS factoryNo,
+            a.SectionID AS areaNo,
+            CONVERT ( VARCHAR ( 10 ), a.PotRommID ) + '厂房' + CONVERT ( VARCHAR ( 10 ), a.SectionID ) + '区' AS sectionName
+        FROM
+            PotRoom a
+    </select>
+
+    <select id="selectFactoryAll" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT DISTINCT
+            a.PotRommID AS factoryNo,
+            CONVERT ( VARCHAR ( 10 ), a.PotRommID ) + '厂房' AS factoryName
+        FROM
+            PotRoom a
+    </select>
+
+    <select id="getRealPotId" parameterType="long" resultType="long">
+        SELECT
+            RealPotID
+        FROM
+            PotRoom
+        WHERE
+            PotRommID = ${potRoomId}
+            AND SectionID = ${sectionId}
+    </select>
+
+    <select id="selectIndFactoryAreaById" parameterType="Long" resultMap="IndFactoryAreaResult">
+        <include refid="selectIndFactoryAreaVo"/>
+        where id = #{id}
+    </select>
+    
+    <select id="getFactoryIp" parameterType="int" resultType="string">
+        SELECT
+            ComputerIP
+        FROM
+            ComputerInfo
+        WHERE
+            ComputerCode = ${factoryNo}
+    </select>
+        
+    <insert id="insertIndFactoryArea" parameterType="IndFactoryArea">
+        insert into ind_factory_area
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="factoryNo != null">factory_no,</if>
+            <if test="areaNo != null">area_no,</if>
+            <if test="sectionName != null">section_name,</if>
+            <if test="startRealSlotNo != null">start_real_slot_no,</if>
+            <if test="endRealSlotNo != null">end_real_slot_no,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="factoryNo != null">#{factoryNo},</if>
+            <if test="areaNo != null">#{areaNo},</if>
+            <if test="sectionName != null">#{sectionName},</if>
+            <if test="startRealSlotNo != null">#{startRealSlotNo},</if>
+            <if test="endRealSlotNo != null">#{endRealSlotNo},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateIndFactoryArea" parameterType="IndFactoryArea">
+        update ind_factory_area
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="factoryNo != null">factory_no = #{factoryNo},</if>
+            <if test="areaNo != null">area_no = #{areaNo},</if>
+            <if test="sectionName != null">section_name = #{sectionName},</if>
+            <if test="startRealSlotNo != null">start_real_slot_no = #{startRealSlotNo},</if>
+            <if test="endRealSlotNo != null">end_real_slot_no = #{endRealSlotNo},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteIndFactoryAreaById" parameterType="Long">
+        update ind_factory_area
+        SET status = 1
+        where id = #{id}
+    </update>
+
+    <update id="deleteIndFactoryAreaByIds" parameterType="String">
+        update ind_factory_area
+        SET status = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.industry.mapper.IndUserFactoryAreaMapper">
+
+    <resultMap type="IndUserFactoryArea" id="IndUserFactoryAreaResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="factoryAreaId"    column="factory_area_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectIndUserFactoryAreaVo">
+        select id, user_id, factory_area_id, create_by, create_time, update_by, update_time from ind_user_factory_area
+    </sql>
+
+    <select id="selectIndUserFactoryAreaList" parameterType="IndUserFactoryArea" resultMap="IndUserFactoryAreaResult">
+        <include refid="selectIndUserFactoryAreaVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="factoryAreaId != null "> and factory_area_id = #{factoryAreaId}</if>
+        </where>
+    </select>
+
+    <select id="selectIndUserFactoryAreaById" parameterType="Long" resultMap="IndUserFactoryAreaResult">
+        <include refid="selectIndUserFactoryAreaVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertIndUserFactoryArea" parameterType="IndUserFactoryArea">
+        insert into ind_user_pot_room
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="potRoomId != null">pot_room_id,</if>
+            <if test="sectionId != null">section_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="potRoomId != null">#{potRoomId},</if>
+            <if test="sectionId != null">#{sectionId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateIndUserFactoryArea" parameterType="IndUserFactoryArea">
+        update ind_user_pot_room
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="potRoomId != null">pot_room_id = #{potRoomId},</if>
+            <if test="sectionId != null">section_id = #{sectionId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteIndUserFactoryAreaById" parameterType="Long">
+        delete from ind_user_factory_area where id = #{id}
+    </delete>
+
+    <delete id="deleteIndUserFactoryAreaByUserId" parameterType="Long">
+        delete from ind_user_pot_room where user_id = ${userId}
+    </delete>
+
+    <delete id="deleteIndUserFactoryAreaByIds" parameterType="String">
+        delete from ind_user_factory_area where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

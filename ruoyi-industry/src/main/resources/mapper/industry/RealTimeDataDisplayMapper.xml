@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.industry.mapper.RealTimeDataDisplayMapper">
+
+    <select id="electrolyzerList" parameterType="long" resultType="com.ruoyi.industry.domain.Electrolyzer">
+        SELECT
+            s.Real_Slot_No AS realSlotNo,
+            r.Inst_OperStatus2 AS modleCode,-- 手/自动
+            CASE
+                WHEN r.Inst_OperStatus2 = 1 THEN '半自动'
+                WHEN r.Inst_OperStatus2 = 2 THEN '手动'
+                WHEN r.Inst_OperStatus2 = 0 THEN '自动'
+            END AS modleName,-- 手/自动name
+            r.Inst_PotStatus2 AS statusCode,-- 状态
+            CASE
+                WHEN r.Inst_PotStatus2 = 1 THEN '波动'
+                WHEN r.Inst_PotStatus2 = 2 THEN '禁止RC'
+            END AS statusName,-- 状态name
+            r.Inst_OperStatus1 AS operateCode,-- 动作列
+            CASE
+                WHEN r.Inst_OperStatus1 = 1 THEN 'RC升'
+                WHEN r.Inst_OperStatus1 = 2 THEN 'RC降'
+                WHEN r.Inst_OperStatus1 = 4 THEN '加料1'
+                WHEN r.Inst_OperStatus1 = 8 THEN '加料2'
+            END AS operateName,-- 动作name
+            p.Set_Volt AS volt,-- 设定电压
+            p.Set_AlF3Mass AS aif3mass,-- 设定氟盐
+            r.Inst_TargetVolt AS targetVolt,-- 目标电压
+            r.Inst_WorkVolt AS workVolt,-- 工作电压
+            r.Set_Intvl_Al2O3_Feed AS setNb,-- 设定NB
+            r.Inst_Intvl_Al2O3_Feed AS actualNb,-- 实际NB
+            r.Inst_PotStatus1 AS feedingCycleCode,-- 加料周期
+            CASE
+                WHEN r.Inst_PotStatus1 = 1 THEN '正常期'
+                WHEN r.Inst_PotStatus1 = 2 THEN '减量期'
+                WHEN r.Inst_PotStatus1 = 4 THEN '增量期'
+            END AS feedingCycleName,-- 加料周期name
+            r.Inst_Slope AS resistance,-- 实时电阻
+            r.Inst_Alarm2 AS startAnodePosition,-- 今日阳极开始位置
+            r.Inst_BV_Angle AS currentAnodePosition,-- 当前阳极位置
+            r.Inst_Fault AS currentFault,-- 当前故障
+            r.Inst_Band_Noise AS highNoise,-- 高频噪声
+            r.Inst_Backup AS lowNoise,-- 低频噪声
+            CONVERT(varchar(100), q.AE_Start_Time, 24) AS aeStartTime,-- 最近AE时刻
+            q.AE_Average_Voltage AS aeAverageVoltage,-- AE均压
+            q.AE_Lasting_Time AS aeLastingTime,-- AE持续时间
+            q.AE_Type AS aeType,-- AE类型
+            m.AECnt AS aeCnt, -- 24小时 AE总数
+            CASE
+                WHEN
+                    DATEDIFF( SECOND, r.Sample_Time, GETDATE()) &gt; 120
+                THEN 1 ELSE 0
+            END AS connectStatus -- 连接状态
+        FROM
+            slotinformation s
+        LEFT JOIN PotRoom o ON s.Machine_No = o.PotRommID AND s.Real_Slot_No = o.RealPotID
+        LEFT JOIN Raw_Datas r ON s.Machine_No = r.Machine_No
+            AND s.Slot_No = r.Slot_No
+            AND s.Real_Slot_No = r.Real_Slot_No
+        LEFT JOIN (
+                SELECT
+                    T.Real_Slot_No,
+                    T.Set_Volt,
+                    T.Set_AlF3Mass
+                FROM
+                    ( SELECT Real_Slot_No, Set_Volt, Set_AlF3Mass, ROW_NUMBER () OVER ( PARTITION BY Real_Slot_No ORDER BY Sign_Time DESC ) AS num FROM SlotSingleParam ) T
+                WHERE
+                T.num &lt;= 1
+            ) p ON s.Real_Slot_No = p.Real_Slot_No
+        LEFT JOIN (
+                SELECT
+                    T.Real_Slot_No,
+                    T.AE_Start_Time,
+                    T.AE_Average_Voltage,
+                    T.AE_Lasting_Time,
+                    T.AE_Type
+                FROM
+                    (
+                        SELECT
+                            Report_AE_Data_Serial,
+                            Real_Slot_No,
+                            AE_Start_Time,
+                            AE_Lasting_Time,
+                            AE_Average_Voltage,
+                            AE_Peak_Voltage,
+                            AE_Type,
+                            ROW_NUMBER () OVER ( PARTITION BY Real_Slot_No ORDER BY AE_Start_Time DESC ) AS num
+                        FROM
+                            AE_Report
+                    ) T
+                WHERE
+                T.num &lt;= 1
+            ) q ON s.Real_Slot_No = q.Real_Slot_No
+        LEFT JOIN (
+            SELECT
+                Real_Slot_No,
+                COUNT ( Real_Slot_No ) AS AECnt
+            FROM
+                AE_Report
+            WHERE
+                AE_Start_Time >= CONVERT ( VARCHAR ( 10 ), getdate(), 120 )
+                AND AE_Lasting_Time >= 60
+            GROUP BY
+                Real_Slot_No
+            ) m ON s.Real_Slot_No = m.Real_Slot_No
+        WHERE
+            o.PotRommID = ${potRoomId}
+            AND o.SectionID = ${sectionId}
+        ORDER BY
+            s.Real_Slot_No ASC
+    </select>
+
+    <select id="connectStatus" parameterType="long" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            d.Real_Slot_No AS realSlotNo,
+            CASE
+                WHEN DATEDIFF( SECOND, d.Sample_Time, GETDATE()) &gt; 120
+                THEN 1 ELSE 0
+            END AS connectStatus
+        FROM
+            Raw_Datas d
+        LEFT JOIN PotRoom o ON d.Machine_No = o.PotRommID AND d.Real_Slot_No = o.RealPotID
+        WHERE
+            o.PotRommID = ${potRoomId}
+            AND o.SectionID = ${sectionId}
+        ORDER BY
+            d.Real_Slot_No ASC
+    </select>
+
+    <select id="getAeCnt" parameterType="long" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            r.Real_Slot_No AS realSlotNo,
+            COUNT ( r.Real_Slot_No ) AS aeCnt
+        FROM
+            AE_Report r
+        LEFT JOIN PotRoom o ON r.Machine_No = o.PotRommID AND r.Real_Slot_No = o.RealPotID
+        WHERE
+            o.PotRommID = ${potRoomId}
+            AND o.SectionID = ${sectionId}
+            AND r.AE_Start_Time >= CONVERT ( VARCHAR ( 10 ), getdate(), 120 )
+            AND r.AE_Lasting_Time >= 60
+        GROUP BY
+            r.Real_Slot_No
+    </select>
+</mapper>

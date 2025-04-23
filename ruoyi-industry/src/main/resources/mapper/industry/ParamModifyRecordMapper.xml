@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.industry.mapper.ParamModifyRecordMapper">
+
+    <select id="paramModifyRecordList" parameterType="com.ruoyi.industry.domain.FactoryAreaParam" resultType="com.ruoyi.industry.domain.ParamModifyRecord">
+        SELECT
+        p.serialid AS serialId,
+        p.slotid AS slotId,
+        CONVERT ( VARCHAR ( 100 ), p.writedate, 120 ) AS writeDate,
+        p.author AS author,
+        p.paramstyle AS paramStyle,
+        CASE
+            WHEN
+                CHARINDEX( '开关', p.paramstyle ) > 0
+            THEN
+                CASE
+                    WHEN
+                        p.originalvalue = 0
+                    THEN '关'
+                    ELSE '开'
+                END
+            WHEN CHARINDEX( '工作状态', p.paramstyle ) > 0 THEN
+                CASE
+                    WHEN p.originalvalue = 0 THEN '焙烧'
+                    WHEN p.originalvalue = 1 THEN '启动'
+                    WHEN p.originalvalue = 2 THEN '运行'
+                    WHEN p.originalvalue = 4 THEN '非生产'
+                END
+            ELSE
+                CAST ( p.originalvalue AS VARCHAR )
+        END AS originalValue,
+        CASE
+            WHEN
+                CHARINDEX( '开关', p.paramstyle ) > 0
+            THEN
+                CASE
+                    WHEN p.newvalue = 0
+                    THEN '关'
+                    ELSE '开'
+                END
+            WHEN
+                CHARINDEX( '工作状态', p.paramstyle ) > 0
+            THEN
+                CASE
+                    WHEN p.newvalue = 0 THEN '焙烧'
+                    WHEN p.newvalue = 1 THEN '启动'
+                    WHEN p.newvalue = 2 THEN '运行'
+                    WHEN p.newvalue = 4 THEN '非生产'
+                END
+            ELSE
+                CAST ( p.newvalue AS VARCHAR )
+        END AS newValue
+        FROM
+            ParamModifyRecord p
+        LEFT JOIN PotRoom r ON r.RealPotID = p.slotid
+        <where>
+            <if test="factoryNo != null  and factoryNo != 0">
+                AND r.PotRommID = ${factoryNo}
+            </if>
+            <if test="areaNo != null  and areaNo != 0">
+                AND r.SectionID = ${areaNo}
+            </if>
+            <if test="realSlotNo != null  and realSlotNo != 0">
+                AND r.RealPotID = ${realSlotNo}
+            </if>
+            <if test="startDate != null  and startDate != ''">
+                AND CONVERT(varchar(100), p.writedate, 23) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null  and endDate != ''">
+                AND CONVERT(varchar(100), p.writedate, 23) &lt;= #{endDate}
+            </if>
+        </where>
+        ORDER BY
+            p.writedate DESC
+    </select>
+
+    <insert id="insertParamModifyRecord" parameterType="com.ruoyi.industry.domain.ParamModifyRecord">
+        insert into ParamModifyRecord
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="slotId != null">slotid,</if>
+            <if test="writeDate != null">writedate,</if>
+            <if test="author != null">author,</if>
+            <if test="paramStyle != null">paramstyle,</if>
+            <if test="originalValue != null">originalvalue,</if>
+            <if test="newValue != null">newvalue,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="slotId != null">#{slotId},</if>
+            <if test="writeDate != null">#{writeDate},</if>
+            <if test="author != null">#{author},</if>
+            <if test="paramStyle != null">#{paramStyle},</if>
+            <if test="originalValue != null">#{originalValue},</if>
+            <if test="newValue != null">#{newValue},</if>
+        </trim>
+    </insert>
+</mapper>

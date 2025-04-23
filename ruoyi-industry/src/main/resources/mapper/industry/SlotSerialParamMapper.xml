@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.industry.mapper.SlotSerialParamMapper">
+
+    <select id="predeterminedAreaList" parameterType="long" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            T.realSlotNo AS realSlotNo,
+            T.setplcurrent0 AS plCurrent0,
+            T.setstopfeedcurrent0 AS stopFeedCurrent0,
+            T.upCurrentRange0 AS upCurrentRange0,
+            T.downCurrentRange0 AS downCurrentRange0,
+            T.setupvoltagerange AS upVoltageRange,
+            T.setdownvoltagerange AS downVoltageRange,
+            T.setupresistrange0 AS upResistRange0,
+            T.setdownresistrange0 AS downResistRange0,
+            T.upResistRange1 AS upResistRange1,
+            T.downResistRange1 AS downResistRange1,
+            T.highVoltageAlarm AS highVoltageAlarm,
+            T.lowVoltageAlarm AS lowVoltageAlarm,
+            T.signTime AS signTime
+        FROM
+            (
+                SELECT
+                    p.Real_Slot_No AS realSlotNo,
+                    CONVERT ( DECIMAL ( 6, 1 ), p.SetPLCurrent0 / 10.0 ) AS setplcurrent0,
+                    CONVERT ( DECIMAL ( 6, 1 ), p.SetStopFeedCurrent0 / 10.0 ) AS setstopfeedcurrent0,
+                    CONVERT ( DECIMAL ( 6, 1 ), p.SetUpCurrentRange0 / 10.0 ) AS upCurrentRange0,
+                    CONVERT ( DECIMAL ( 6, 1 ), p.SetDownCurrentRange0 / 10.0 ) AS downCurrentRange0,
+                    p.SetUpVoltageRange AS setupvoltagerange,
+                    p.SetDownVoltageRange AS setdownvoltagerange,
+                    p.SetUpResistRange0 AS setupresistrange0,
+                    p.SetDownResistRange0 AS setdownresistrange0,
+                    p.SetUpResistRange1 AS upResistRange1,
+                    p.SetDownResistRange1 AS downResistRange1,
+                    p.SetHighVoltageAlarm AS highVoltageAlarm,
+                    p.SetLowVoltageAlarm AS lowVoltageAlarm,
+                    CONVERT ( VARCHAR, p.Sign_Time, 120 ) AS signTime,
+                    ROW_NUMBER () OVER ( PARTITION BY p.Real_Slot_No ORDER BY p.Sign_Time DESC ) AS num
+                FROM
+                    SlotSerialParam p
+                LEFT JOIN PotRoom r ON r.RealPotID = p.Real_Slot_No
+                WHERE
+                    r.PotRommID = ${potRoomId}
+                    AND r.SectionID = ${sectionId}
+            ) T
+        WHERE
+            T.num &lt;= 1
+        ORDER BY
+            T.realSlotNo ASC
+    </select>
+
+    <select id="operationProcessList" parameterType="long" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            T.realSlotNo AS realSlotNo,
+            T.setprocessmetalfeedtime AS processMetalFeedTime,
+            T.setprocessmetaladdvolt AS processMetalAddVolt,
+            T.setprocessmetaladdvolttime AS processMetalAddVoltTime,
+            T.setprocessacfeedtime AS processAcFeedTime,
+            T.setprocessacaddvolt AS processAcAddVolt,
+            T.setprocessacaddvolttime AS processAcAddVoltTime,
+            T.SetAddSideFeedTime AS addSideFeedTime,
+            T.SetAddSideAddVolt AS addSideAddVolt,
+            T.SetAddSideAddVoltTime AS addSideAddVoltTime,
+            T.SetProcessBRFeedTime AS processBrFeedTime,
+            T.SetAEStartVolt0 AS aeStartVolt0,
+            T.SetNoiseAddMaxVolt AS noiseAddMaxVolt,
+            T.SetNoiseAddVoltTime AS noiseAddVoltTime,
+            T.SetNoiseHigh AS noiseHigh,
+            T.SetNoiseLow AS noiseLow,
+            T.signTime AS signTime
+        FROM
+            (
+                SELECT
+                    p.Real_Slot_No AS realSlotNo,
+                    p.SetProcessMetalFeedTime AS setprocessmetalfeedtime,
+                    p.SetProcessMetalAddVolt AS setprocessmetaladdvolt,
+                    p.SetProcessMetalAddVoltTime AS setprocessmetaladdvolttime,
+                    p.SetProcessACFeedTime AS setprocessacfeedtime,
+                    p.SetProcessACAddVolt AS setprocessacaddvolt,
+                    p.SetProcessACAddVoltTime AS setprocessacaddvolttime,
+                    P.SetAddSideFeedTime,
+                    p.SetAddSideAddVolt,
+                    p.SetAddSideAddVoltTime,
+                    p.SetProcessBRFeedTime,
+                    p.SetAEStartVolt0,
+                    p.SetNoiseAddMaxVolt,
+                    p.SetNoiseAddVoltTime,
+                    p.SetNoiseHigh,
+                    p.SetNoiseLow,
+                    CONVERT ( VARCHAR, p.Sign_Time, 120 ) AS signTime,
+                    ROW_NUMBER () OVER ( PARTITION BY p.Real_Slot_No ORDER BY p.Sign_Time DESC ) AS num
+                FROM
+                    SlotSerialParam p
+                LEFT JOIN PotRoom r ON r.RealPotID = p.Real_Slot_No
+                WHERE
+                    r.PotRommID = ${potRoomId}
+                    AND r.SectionID = ${sectionId}
+            ) T
+        WHERE
+            T.num &lt;= 1
+        ORDER BY
+            T.realSlotNo ASC
+    </select>
+
+    <select id="concentrationParamList" parameterType="long" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            T.realSlotNo AS realSlotNo,
+            T.setadptcyclecoef AS adptCycleCoef,
+            T.setadptovercoef AS adptOverCoef,
+            T.setadptundercoef AS adptUnderCoef,
+            T.setadptnormaldur AS adptNormalDur,
+            T.setadptunderdur AS adptUnderDur,
+            T.setadptoverdur AS adptOverDur,
+            T.signTime AS signTime
+        FROM
+            (
+                SELECT
+                    p.Real_Slot_No AS realSlotNo,
+                    p.SetAdptCycleCoef AS setadptcyclecoef,
+                    p.SetAdptOverCoef AS setadptovercoef,
+                    p.SetAdptUnderCoef AS setadptundercoef,
+                    p.SetAdptNormalDur AS setadptnormaldur,
+                    p.SetAdptUnderDur AS setadptunderdur,
+                    p.SetAdptOverDur AS setadptoverdur,
+                    CONVERT ( VARCHAR, p.Sign_Time, 120 ) AS signTime,
+                    ROW_NUMBER () OVER ( PARTITION BY p.Real_Slot_No ORDER BY p.Sign_Time DESC ) AS num
+                FROM
+                    SlotSerialParam p
+                LEFT JOIN PotRoom r ON r.RealPotID = p.Real_Slot_No
+                WHERE
+                    r.PotRommID = ${potRoomId}
+                    AND r.SectionID = ${sectionId}
+            ) T
+        WHERE
+            T.num &lt;= 1
+        ORDER BY
+            T.realSlotNo ASC
+    </select>
+
+    <select id="performActionParamList" parameterType="long" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            T.realSlotNo AS realSlotNo,
+            T.setactioncrusttime1 AS actionCrustTime1,
+            T.setactioncrusttime2 AS actionCrustTime2,
+            T.setactional2o3feedtime AS actionAl2o3FeedTime,
+            T.shellfeedcount AS shellFeedCount,
+            T.signTime AS signTime
+        FROM
+            (
+                SELECT
+                    p.Real_Slot_No AS realSlotNo,
+                    p.SetActionCrustTime1 AS setactioncrusttime1,
+                    p.SetActionCrustTime2 AS setactioncrusttime2,
+                    p.SetActionAl2O3FeedTime AS setactional2o3feedtime,
+                    p.ShellFeedCount AS shellfeedcount,
+                    CONVERT ( VARCHAR, p.Sign_Time, 120 ) AS signTime,
+                    ROW_NUMBER () OVER ( PARTITION BY p.Real_Slot_No ORDER BY p.Sign_Time DESC ) AS num
+                FROM
+                    SlotSerialParam p
+                LEFT JOIN PotRoom r ON r.RealPotID = p.Real_Slot_No
+                WHERE
+                    r.PotRommID = ${potRoomId}
+                    AND r.SectionID = ${sectionId}
+            ) T
+        WHERE
+            T.num &lt;= 1
+        ORDER BY
+            T.realSlotNo ASC
+    </select>
+
+    <select id="getSlotSerialParamList" parameterType="long" resultType="com.ruoyi.industry.domain.SlotSerialParam">
+        SELECT
+            T.Machine_No AS machineNo,
+            T.Slot_No AS slotNo,
+            T.Real_Slot_No AS realSlotNo,
+            T.SetPLCurrent0 AS plCurrent0,
+            T.SetPLCurrent1 AS plCurrent1,
+            T.SetStopFeedCurrent0 AS stopFeedCurrent0,
+            T.SetStopFeedCurrent1 AS stopFeedCurrent1,
+            T.SetUpCurrentRange0 AS upCurrentRange0,
+            T.SetDownCurrentRange0 AS downCurrentRange0,
+            T.SetUpCurrentRange1 AS upCurrentRange1,
+            T.SetDownCurrentRange1 AS downCurrentRange1,
+            T.SetUpVoltageRange AS upVoltageRange,
+            T.SetDownVoltageRange AS downVoltageRange,
+            T.SetUpResistRange0 AS upResistRange0,
+            T.SetDownResistRange0 AS downResistRange0,
+            T.SetUpResistRange1 AS upResistRange1,
+            T.SetDownResistRange1 AS downResistRange1,
+            T.SetProcessMetalFeedTime AS processMetalFeedTime,
+            T.SetProcessMetalAddVolt AS processMetalAddVolt,
+            T.SetProcessMetalAddVoltTime AS processMetalAddVoltTime,
+            T.SetProcessACFeedTime AS processAcFeedTime,
+            T.SetProcessACAddVolt AS processAcAddVolt,
+            T.SetProcessACAddVoltTime AS processAcAddVoltTime,
+            T.SetAddSideFeedTime AS addSideFeedTime,
+            T.SetAddSideAddVolt AS addSideAddVolt,
+            T.SetAddSideAddVoltTime AS addSideAddVoltTime,
+            T.SetProcessBRFeedTime AS processBrFeedTime,
+            T.SetAEStartVolt0 AS aeStartVolt0,
+            T.SetAEStartVolt1 AS aeStartVolt1,
+            T.SetAEEndVolt AS aeEndVolt,
+            T.SetAEFeedCNT AS aeFeedCnt,
+            T.SetAEWaitLastTime AS aeWaitLastTime,
+            T.SetAEUpDownStep AS aeUpDownStep,
+            T.SetAETreatTime AS aeTreatTime,
+            T.SetAEJudgeDur AS aeJudgeDur,
+            T.SetNoiseAddMaxVolt AS noiseAddMaxVolt,
+            T.SetNoiseAddVoltTime AS noiseAddVoltTime,
+            T.SetNoiseHigh AS noiseHigh,
+            T.SetNoiseLow AS noiseLow,
+            T.SetAlF3Time AS alf3Time,
+            T.SetAdptCycleCoef AS adptCycleCoef,
+            T.SetAdptOverCoef AS adptOverCoef,
+            T.SetAdptUnderCoef AS adptUnderCoef,
+            T.SetAdptNormalDur AS adptNormalDur,
+            T.SetAdptUnderDur AS adptUnderDur,
+            T.SetAdptOverDur AS adptOverDur,
+            T.SetActionCrustTime1 AS actionCrustTime1,
+            T.SetActionCrustTime2 AS actionCrustTime2,
+            T.SetActionAl2O3FeedTime AS actionAl2o3FeedTime,
+            T.SetActionAlF3FeedTime AS actionAlf3FeedTime,
+            T.ShellFeedCount AS shellFeedCount,
+            T.SetPLCurrentSwitch AS plCurrentSwitch,
+            T.SetHighVoltageAlarm AS highVoltageAlarm,
+            T.SetLowVoltageAlarm AS lowVoltageAlarm,
+            T.SerialTemp1 AS serialTemp1,
+            T.SerialTemp2 AS serialTemp2
+        FROM
+            (
+                SELECT
+                    p.Machine_No,
+                    p.Slot_No,
+                    p.Real_Slot_No,
+                    p.SetPLCurrent0,
+                    p.SetPLCurrent1,
+                    p.SetStopFeedCurrent0,
+                    p.SetStopFeedCurrent1,
+                    p.SetUpCurrentRange0,
+                    p.SetDownCurrentRange0,
+                    p.SetUpCurrentRange1,
+                    p.SetDownCurrentRange1,
+                    p.SetUpVoltageRange,
+                    p.SetDownVoltageRange,
+                    p.SetUpResistRange0,
+                    p.SetDownResistRange0,
+                    p.SetUpResistRange1,
+                    p.SetDownResistRange1,
+                    p.SetProcessMetalFeedTime,
+                    p.SetProcessMetalAddVolt,
+                    p.SetProcessMetalAddVoltTime,
+                    p.SetProcessACFeedTime,
+                    p.SetProcessACAddVolt,
+                    p.SetProcessACAddVoltTime,
+                    p.SetAddSideFeedTime,
+                    p.SetAddSideAddVolt,
+                    p.SetAddSideAddVoltTime,
+                    p.SetProcessBRFeedTime,
+                    p.SetAEStartVolt0,
+                    p.SetAEStartVolt1,
+                    p.SetAEEndVolt,
+                    p.SetAEFeedCNT,
+                    p.SetAEWaitLastTime,
+                    p.SetAEUpDownStep,
+                    p.SetAETreatTime,
+                    p.SetAEJudgeDur,
+                    p.SetNoiseAddMaxVolt,
+                    p.SetNoiseAddVoltTime,
+                    p.SetNoiseHigh,
+                    p.SetNoiseLow,
+                    p.SetAlF3Time,
+                    p.SetAdptCycleCoef,
+                    p.SetAdptOverCoef,
+                    p.SetAdptUnderCoef,
+                    p.SetAdptNormalDur,
+                    p.SetAdptUnderDur,
+                    p.SetAdptOverDur,
+                    p.SetActionCrustTime1,
+                    p.SetActionCrustTime2,
+                    p.SetActionAl2O3FeedTime,
+                    p.SetActionAlF3FeedTime,
+                    p.ShellFeedCount,
+                    p.SetPLCurrentSwitch,
+                    p.SetHighVoltageAlarm,
+                    p.SetLowVoltageAlarm,
+                    p.SerialTemp1,
+                    p.SerialTemp2,
+                    ROW_NUMBER () OVER ( PARTITION BY p.Real_Slot_No ORDER BY p.Sign_Time DESC ) AS num
+                FROM
+                    SlotSerialParam p
+                WHERE
+                    p.Real_Slot_No in
+                    <foreach item="realSlotNo" collection="realSlotNoList"  index="index" open="(" separator="," close=")">
+                        #{realSlotNo}
+                    </foreach>
+            ) T
+        WHERE
+            T.num &lt;= 1
+        ORDER BY
+            T.Real_Slot_No ASC
+    </select>
+
+    <insert id="insertSlotSerialParam" parameterType="com.ruoyi.industry.domain.SlotSerialParam">
+        insert into SlotSerialParam
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="machineNo != null">Machine_No,</if>
+            <if test="slotNo != null">Slot_No,</if>
+            <if test="realSlotNo != null">Real_Slot_No,</if>
+            <if test="signTime != null">Sign_Time,</if>
+            <if test="author != null">Author,</if>
+            <if test="plCurrent0 != null">SetPLCurrent0,</if>
+            <if test="plCurrent1 != null">SetPLCurrent1,</if>
+            <if test="stopFeedCurrent0 != null">SetStopFeedCurrent0,</if>
+            <if test="stopFeedCurrent1 != null">SetStopFeedCurrent1,</if>
+            <if test="upCurrentRange0 != null">SetUpCurrentRange0,</if>
+            <if test="downCurrentRange0 != null">SetDownCurrentRange0,</if>
+            <if test="upCurrentRange1 != null">SetUpCurrentRange1,</if>
+            <if test="downCurrentRange1 != null">SetDownCurrentRange1,</if>
+            <if test="upVoltageRange != null">SetUpVoltageRange,</if>
+            <if test="downVoltageRange != null">SetDownVoltageRange,</if>
+            <if test="upResistRange0 != null">SetUpResistRange0,</if>
+            <if test="downResistRange0 != null">SetDownResistRange0,</if>
+            <if test="upResistRange1 != null">SetUpResistRange1,</if>
+            <if test="downResistRange1 != null">SetDownResistRange1,</if>
+            <if test="processMetalFeedTime != null">SetProcessMetalFeedTime,</if>
+            <if test="processMetalAddVolt != null">SetProcessMetalAddVolt,</if>
+            <if test="processMetalAddVoltTime != null">SetProcessMetalAddVoltTime,</if>
+            <if test="processAcFeedTime != null">SetProcessACFeedTime,</if>
+            <if test="processAcAddVolt != null">SetProcessACAddVolt,</if>
+            <if test="processAcAddVoltTime != null">SetProcessACAddVoltTime,</if>
+            <if test="addSideFeedTime != null">SetAddSideFeedTime,</if>
+            <if test="addSideAddVolt != null">SetAddSideAddVolt,</if>
+            <if test="addSideAddVoltTime != null">SetAddSideAddVoltTime,</if>
+            <if test="processBrFeedTime != null">SetProcessBRFeedTime,</if>
+            <if test="aeStartVolt0 != null">SetAEStartVolt0,</if>
+            <if test="aeStartVolt1 != null">SetAEStartVolt1,</if>
+            <if test="aeEndVolt != null">SetAEEndVolt,</if>
+            <if test="aeFeedCnt != null">SetAEFeedCNT,</if>
+            <if test="aeWaitLastTime != null">SetAEWaitLastTime,</if>
+            <if test="aeUpDownStep != null">SetAEUpDownStep,</if>
+            <if test="aeTreatTime != null">SetAETreatTime,</if>
+            <if test="aeJudgeDur != null">SetAEJudgeDur,</if>
+            <if test="noiseAddMaxVolt != null">SetNoiseAddMaxVolt,</if>
+            <if test="noiseAddVoltTime != null">SetNoiseAddVoltTime,</if>
+            <if test="noiseHigh != null">SetNoiseHigh,</if>
+            <if test="noiseLow != null">SetNoiseLow,</if>
+            <if test="alf3Time != null">SetAlF3Time,</if>
+            <if test="adptCycleCoef != null">SetAdptCycleCoef,</if>
+            <if test="adptOverCoef != null">SetAdptOverCoef,</if>
+            <if test="adptUnderCoef != null">SetAdptUnderCoef,</if>
+            <if test="adptNormalDur != null">SetAdptNormalDur,</if>
+            <if test="adptUnderDur != null">SetAdptUnderDur,</if>
+            <if test="adptOverDur != null">SetAdptOverDur,</if>
+            <if test="actionCrustTime1 != null">SetActionCrustTime1,</if>
+            <if test="actionCrustTime2 != null">SetActionCrustTime2,</if>
+            <if test="actionAl2o3FeedTime != null">SetActionAl2O3FeedTime,</if>
+            <if test="actionAlf3FeedTime != null">SetActionAlF3FeedTime,</if>
+            <if test="shellFeedCount != null">ShellFeedCount,</if>
+            <if test="plCurrentSwitch != null">SetPLCurrentSwitch,</if>
+            <if test="highVoltageAlarm != null">SetHighVoltageAlarm,</if>
+            <if test="lowVoltageAlarm != null">SetLowVoltageAlarm,</if>
+            <if test="serialTemp1 != null">SerialTemp1,</if>
+            <if test="serialTemp2 != null">SerialTemp2,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="machineNo != null">#{machineNo},</if>
+            <if test="slotNo != null">#{slotNo},</if>
+            <if test="realSlotNo != null">#{realSlotNo},</if>
+            <if test="signTime != null">#{signTime},</if>
+            <if test="author != null">#{author},</if>
+            <if test="plCurrent0 != null">#{plCurrent0},</if>
+            <if test="plCurrent1 != null">#{plCurrent1},</if>
+            <if test="stopFeedCurrent0 != null">#{stopFeedCurrent0},</if>
+            <if test="stopFeedCurrent1 != null">#{stopFeedCurrent1},</if>
+            <if test="upCurrentRange0 != null">#{upCurrentRange0},</if>
+            <if test="downCurrentRange0 != null">#{downCurrentRange0},</if>
+            <if test="upCurrentRange1 != null">#{upCurrentRange1},</if>
+            <if test="downCurrentRange1 != null">#{downCurrentRange1},</if>
+            <if test="upVoltageRange != null">#{upVoltageRange},</if>
+            <if test="downVoltageRange != null">#{downVoltageRange},</if>
+            <if test="upResistRange0 != null">#{upResistRange0},</if>
+            <if test="downResistRange0 != null">#{downResistRange0},</if>
+            <if test="upResistRange1 != null">#{upResistRange1},</if>
+            <if test="downResistRange1 != null">#{downResistRange1},</if>
+            <if test="processMetalFeedTime != null">#{processMetalFeedTime},</if>
+            <if test="processMetalAddVolt != null">#{processMetalAddVolt},</if>
+            <if test="processMetalAddVoltTime != null">#{processMetalAddVoltTime},</if>
+            <if test="processAcFeedTime != null">#{processAcFeedTime},</if>
+            <if test="processAcAddVolt != null">#{processAcAddVolt},</if>
+            <if test="processAcAddVoltTime != null">#{processAcAddVoltTime},</if>
+            <if test="addSideFeedTime != null">#{addSideFeedTime},</if>
+            <if test="addSideAddVolt != null">#{addSideAddVolt},</if>
+            <if test="addSideAddVoltTime != null">#{addSideAddVoltTime},</if>
+            <if test="processBrFeedTime != null">#{processBrFeedTime},</if>
+            <if test="aeStartVolt0 != null">#{aeStartVolt0},</if>
+            <if test="aeStartVolt1 != null">#{aeStartVolt1},</if>
+            <if test="aeEndVolt != null">#{aeEndVolt},</if>
+            <if test="aeFeedCnt != null">#{aeFeedCnt},</if>
+            <if test="aeWaitLastTime != null">#{aeWaitLastTime},</if>
+            <if test="aeUpDownStep != null">#{aeUpDownStep},</if>
+            <if test="aeTreatTime != null">#{aeTreatTime},</if>
+            <if test="aeJudgeDur != null">#{aeJudgeDur},</if>
+            <if test="noiseAddMaxVolt != null">#{noiseAddMaxVolt},</if>
+            <if test="noiseAddVoltTime != null">#{noiseAddVoltTime},</if>
+            <if test="noiseHigh != null">#{noiseHigh},</if>
+            <if test="noiseLow != null">#{noiseLow},</if>
+            <if test="alf3Time != null">#{alf3Time},</if>
+            <if test="adptCycleCoef != null">#{adptCycleCoef},</if>
+            <if test="adptOverCoef != null">#{adptOverCoef},</if>
+            <if test="adptUnderCoef != null">#{adptUnderCoef},</if>
+            <if test="adptNormalDur != null">#{adptNormalDur},</if>
+            <if test="adptUnderDur != null">#{adptUnderDur},</if>
+            <if test="adptOverDur != null">#{adptOverDur},</if>
+            <if test="actionCrustTime1 != null">#{actionCrustTime1},</if>
+            <if test="actionCrustTime2 != null">#{actionCrustTime2},</if>
+            <if test="actionAl2o3FeedTime != null">#{actionAl2o3FeedTime},</if>
+            <if test="actionAlf3FeedTime != null">#{actionAlf3FeedTime},</if>
+            <if test="shellFeedCount != null">#{shellFeedCount},</if>
+            <if test="plCurrentSwitch != null">#{plCurrentSwitch},</if>
+            <if test="highVoltageAlarm != null">#{highVoltageAlarm},</if>
+            <if test="lowVoltageAlarm != null">#{lowVoltageAlarm},</if>
+            <if test="serialTemp1 != null">#{serialTemp1},</if>
+            <if test="serialTemp2 != null">#{serialTemp2},</if>
+        </trim>
+    </insert>
+
+</mapper>

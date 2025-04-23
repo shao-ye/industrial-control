@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.industry.mapper.SlotOffLineParamChartMapper">
+
+    <resultMap type="SlotOffLineCheckBox" id="IndSlot0ffLineCheckboxResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="tartgetVoltage"    column="tartget_voltage"    />
+        <result property="workingVoltage"    column="working_voltage"    />
+        <result property="averageVoltage"    column="average_voltage"    />
+        <result property="instHighNoiseValue"    column="instHigh_noiseValue"    />
+        <result property="instLowNoiseValue"    column="instLow_noiseValue"    />
+        <result property="actualFluorideSalt"    column="actual_fluoride_salt"    />
+        <result property="dayReport"    column="day_report"    />
+        <result property="metalMass"    column="metal_mass"    />
+        <result property="metalHeight"    column="metal_height"    />
+        <result property="bathHeight"    column="bath_height"    />
+        <result property="bathTemperature"    column="bath_temperature"    />
+        <result property="bathRatio"    column="bath_ratio"    />
+        <result property="feContent"    column="fe_content"    />
+        <result property="siContent"    column="si_content"    />
+        <result property="metalQuality"    column="metal_quality"    />
+        <result property="al2O3Concen"    column="al2O3_concen"    />
+        <result property="cvd"    column="cvd"    />
+        <result property="acd"    column="acd"    />
+        <result property="realMetalMass"    column="real_metal_mass"    />
+    </resultMap>
+
+    <sql id="selectIndSlot0ffLineCheckboxVo">
+        select id, user_id, tartget_voltage, working_voltage, average_voltage, instHigh_noiseValue, instLow_noiseValue, actual_fluoride_salt, day_report, metal_mass, metal_height, bath_height, bath_temperature, bath_ratio, fe_content, si_content, metal_quality, al2O3_concen, cvd, acd, real_metal_mass from ind_slot_off_line_checkbox
+    </sql>
+
+    <select id="selectIndSlot0ffLineCheckboxList" parameterType="SlotOffLineCheckBox" resultMap="IndSlot0ffLineCheckboxResult">
+        <include refid="selectIndSlot0ffLineCheckboxVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="tartgetVoltage != null "> and tartget_voltage = #{tartgetVoltage}</if>
+            <if test="workingVoltage != null "> and working_voltage = #{workingVoltage}</if>
+            <if test="averageVoltage != null "> and average_voltage = #{averageVoltage}</if>
+            <if test="instHighNoiseValue != null "> and instHigh_noiseValue = #{instHighNoiseValue}</if>
+            <if test="instLowNoiseValue != null "> and instLow_noiseValue = #{instLowNoiseValue}</if>
+            <if test="actualFluorideSalt != null "> and actual_fluoride_salt = #{actualFluorideSalt}</if>
+            <if test="dayReport != null "> and day_report = #{dayReport}</if>
+            <if test="metalMass != null "> and metal_mass = #{metalMass}</if>
+            <if test="metalHeight != null "> and metal_height = #{metalHeight}</if>
+            <if test="bathHeight != null "> and bath_height = #{bathHeight}</if>
+            <if test="bathTemperature != null "> and bath_temperature = #{bathTemperature}</if>
+            <if test="bathRatio != null "> and bath_ratio = #{bathRatio}</if>
+            <if test="feContent != null "> and fe_content = #{feContent}</if>
+            <if test="siContent != null "> and si_content = #{siContent}</if>
+            <if test="metalQuality != null "> and metal_quality = #{metalQuality}</if>
+            <if test="al2O3Concen != null "> and al2O3_concen = #{al2O3Concen}</if>
+            <if test="cvd != null "> and cvd = #{cvd}</if>
+            <if test="acd != null "> and acd = #{acd}</if>
+            <if test="realMetalMass != null "> and real_metal_mass = #{realMetalMass}</if>
+        </where>
+    </select>
+
+    <select id="selectIndSlot0ffLineCheckboxByUserId" parameterType="Long" resultMap="IndSlot0ffLineCheckboxResult">
+        <include refid="selectIndSlot0ffLineCheckboxVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertIndSlot0ffLineCheckbox" parameterType="SlotOffLineCheckBox">
+        insert into ind_slot_off_line_checkbox
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="tartgetVoltage != null">tartget_voltage,</if>
+            <if test="workingVoltage != null">working_voltage,</if>
+            <if test="averageVoltage != null">average_voltage,</if>
+            <if test="instHighNoiseValue != null">instHigh_noiseValue,</if>
+            <if test="instLowNoiseValue != null">instLow_noiseValue,</if>
+            <if test="actualFluorideSalt != null">actual_fluoride_salt,</if>
+            <if test="dayReport != null">day_report,</if>
+            <if test="metalMass != null">metal_mass,</if>
+            <if test="metalHeight != null">metal_height,</if>
+            <if test="bathHeight != null">bath_height,</if>
+            <if test="bathTemperature != null">bath_temperature,</if>
+            <if test="bathRatio != null">bath_ratio,</if>
+            <if test="feContent != null">fe_content,</if>
+            <if test="siContent != null">si_content,</if>
+            <if test="metalQuality != null">metal_quality,</if>
+            <if test="al2O3Concen != null">al2O3_concen,</if>
+            <if test="cvd != null">cvd,</if>
+            <if test="acd != null">acd,</if>
+            <if test="realMetalMass != null">real_metal_mass,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="tartgetVoltage != null">#{tartgetVoltage},</if>
+            <if test="workingVoltage != null">#{workingVoltage},</if>
+            <if test="averageVoltage != null">#{averageVoltage},</if>
+            <if test="instHighNoiseValue != null">#{instHighNoiseValue},</if>
+            <if test="instLowNoiseValue != null">#{instLowNoiseValue},</if>
+            <if test="actualFluorideSalt != null">#{actualFluorideSalt},</if>
+            <if test="dayReport != null">#{dayReport},</if>
+            <if test="metalMass != null">#{metalMass},</if>
+            <if test="metalHeight != null">#{metalHeight},</if>
+            <if test="bathHeight != null">#{bathHeight},</if>
+            <if test="bathTemperature != null">#{bathTemperature},</if>
+            <if test="bathRatio != null">#{bathRatio},</if>
+            <if test="feContent != null">#{feContent},</if>
+            <if test="siContent != null">#{siContent},</if>
+            <if test="metalQuality != null">#{metalQuality},</if>
+            <if test="al2O3Concen != null">#{al2O3Concen},</if>
+            <if test="cvd != null">#{cvd},</if>
+            <if test="acd != null">#{acd},</if>
+            <if test="realMetalMass != null">#{realMetalMass},</if>
+        </trim>
+    </insert>
+
+    <update id="updateIndSlot0ffLineCheckboxByUserId" parameterType="SlotOffLineCheckBox">
+        update ind_slot_off_line_checkbox
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tartgetVoltage != null">tartget_voltage = #{tartgetVoltage},</if>
+            <if test="workingVoltage != null">working_voltage = #{workingVoltage},</if>
+            <if test="averageVoltage != null">average_voltage = #{averageVoltage},</if>
+            <if test="instHighNoiseValue != null">instHigh_noiseValue = #{instHighNoiseValue},</if>
+            <if test="instLowNoiseValue != null">instLow_noiseValue = #{instLowNoiseValue},</if>
+            <if test="actualFluorideSalt != null">actual_fluoride_salt = #{actualFluorideSalt},</if>
+            <if test="dayReport != null">day_report = #{dayReport},</if>
+            <if test="metalMass != null">metal_mass = #{metalMass},</if>
+            <if test="metalHeight != null">metal_height = #{metalHeight},</if>
+            <if test="bathHeight != null">bath_height = #{bathHeight},</if>
+            <if test="bathTemperature != null">bath_temperature = #{bathTemperature},</if>
+            <if test="bathRatio != null">bath_ratio = #{bathRatio},</if>
+            <if test="feContent != null">fe_content = #{feContent},</if>
+            <if test="siContent != null">si_content = #{siContent},</if>
+            <if test="metalQuality != null">metal_quality = #{metalQuality},</if>
+            <if test="al2O3Concen != null">al2O3_concen = #{al2O3Concen},</if>
+            <if test="cvd != null">cvd = #{cvd},</if>
+            <if test="acd != null">acd = #{acd},</if>
+            <if test="realMetalMass != null">real_metal_mass = #{realMetalMass},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <select id="dayReportSlotOffLine" parameterType="string" resultType="java.util.Map">
+        SELECT
+            CONVERT ( VARCHAR ( 100 ), r.Write_down_Date, 23 ) date,
+            r.Tartget_Voltage AS tartgetVoltage,
+            r.Working_Voltage AS workingVoltage,
+            r.Average_Voltage AS averageVoltage,
+            r.Inst_High_Noise_Value AS instHighNoiseValue,
+            r.Inst_Low_Noise_Value AS instLowNoiseValue,
+            r.Manual_AlF3Feed_Count + Auto_AlF3Feed_Count AS actualFluorideSalt,
+            r.AE_Count AS dayReport
+        FROM
+            Day_Report r
+        LEFT JOIN PotRoom p ON r.Real_Slot_No = p.RealPotID
+        WHERE
+            CONVERT ( VARCHAR ( 100 ), r.Write_down_Date, 23 ) &gt;= #{startDate}
+            AND CONVERT ( VARCHAR ( 100 ), r.Write_down_Date, 23 ) &lt;= #{endDate}
+            AND p.RealPotID = ${realPotId}
+    </select>
+
+    <select id="slotOffLine" parameterType="string" resultType="java.util.Map">
+        SELECT
+            CONVERT ( VARCHAR ( 100 ), r.Sign_Time, 23 ) date,
+            r.Metal_mass AS metalMass,
+            r.Metal_Height AS metalHeight,
+            r.Bath_Height AS bathHeight,
+            r.Bath_Temperature AS bathTemperature,
+            r.Bath_Ratio AS bathRatio,
+            r.Fe_Content AS feContent,
+            r.Si_Content AS siContent,
+            r.Metal_Quality AS metalQuality,
+            r.Al2O3_Concen AS al2O3Concen,
+            r.CVD AS cvd,
+            r.ACD AS acd,
+            r.RealMetal_mass AS realMetalMass
+        FROM
+            SlotOffLineParam r
+        LEFT JOIN PotRoom p ON r.Real_Slot_No = p.RealPotID
+        WHERE
+            CONVERT ( VARCHAR ( 100 ), r.Sign_Time, 23 ) &gt;= #{startDate}
+            AND CONVERT ( VARCHAR ( 100 ), r.Sign_Time, 23 ) &lt;= #{endDate}
+            AND p.RealPotID = ${realPotId}
+    </select>
+</mapper>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.industry.mapper.SlotSingleParamMapper">
+
+    <select id="commonParamList" parameterType="long" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+            T.realSlotNo AS realSlotNo,
+            T.setVolt AS volt,
+            T.setFeedIntvl0 AS feedIntvl0,
+            T.aeIntvl AS aeIntvl,
+            T.alf3Intvl AS alf3Intvl,
+            T.setAlf3Mass AS alf3Mass,
+            T.bvAngle AS bvAngle,
+            T.onOffPrestaSwitch AS onOffPrestaSwitch,
+            T.signTime AS signTime
+        FROM
+            (
+                SELECT
+                    p.Real_Slot_No AS realSlotNo,
+                    p.Set_Volt AS setVolt,
+                    p.Set_FeedIntvl0 AS setFeedIntvl0,
+                    p.Set_AEIntvl AS aeIntvl,
+                    p.Set_AlF3Mass AS setAlf3Mass,
+                    p.Set_AlF3Intvl AS alf3Intvl,
+                    p.Set_BV_Angle AS bvAngle,
+                    p.SetOnOffPreStaSwitch AS onOffPrestaSwitch,
+                    CONVERT ( VARCHAR, p.Sign_Time, 120 ) AS signTime,
+                    ROW_NUMBER () OVER ( PARTITION BY p.Real_Slot_No ORDER BY p.Sign_Time DESC ) AS num
+                FROM
+                    SlotSingleParam p
+                LEFT JOIN PotRoom r ON r.RealPotID = p.Real_Slot_No
+                WHERE
+                    r.PotRommID = ${potRoomId}
+                    AND r.SectionID = ${sectionId}
+            ) T
+        WHERE
+            T.num &lt;= 1
+        ORDER BY
+            T.realSlotNo ASC
+    </select>
+
+    <select id="controlSwitchList" parameterType="long" resultType="com.alibaba.fastjson.JSONObject">
+        SELECT
+             T.realSlotNo AS realSlotNo,
+            CAST (T.SetAdaptiveSwitch AS INT) AS adaptiveSwitch,
+            CAST (T.SetNoiseSwitch AS INT) AS noiseSwitch,
+            CAST (T.SetNoiseMonSwitch AS INT) AS noiseMonSwitch,
+            CAST (T.SetAECancelSwitch AS INT) AS aeCancelSwitch,
+            CAST (T.SetAEQuenchSwitch AS INT) AS aeQuenchSwitch,
+            CAST (T.SetAlF3Switch AS INT) AS alf3Switch,
+            CAST (T.SetTemperatureSwitch AS INT) AS temperatureSwitch,
+            CAST (T.SetValveSwitch AS INT) AS valveSwitch,
+            CAST (T.SetOnOffLineSwitch AS INT) AS onOffLineSwitch,
+            CAST (T.Set_Spare_Switch1 AS INT) AS spareSwitch1,
+            CAST (T.Set_Spare_Switch2 AS INT) AS spareSwitch2,
+            T.signTime AS signTime
+        FROM
+            (
+                SELECT
+                    p.Real_Slot_No AS realSlotNo,
+                    p.SetAdaptiveSwitch,
+                    p.SetNoiseSwitch,
+                    p.SetNoiseMonSwitch,
+                    p.SetAECancelSwitch,
+                    p.SetAEQuenchSwitch,
+                    p.SetAlF3Switch,
+                    p.SetTemperatureSwitch,
+                    p.SetValveSwitch,
+                    p.SetOnOffLineSwitch,
+                    p.Set_Spare_Switch1,
+                    p.Set_Spare_Switch2,
+                    CONVERT ( VARCHAR, p.Sign_Time, 120 ) AS signTime,
+                    ROW_NUMBER () OVER ( PARTITION BY p.Real_Slot_No ORDER BY p.Sign_Time DESC ) AS num
+                FROM
+                    SlotSingleParam p
+                LEFT JOIN PotRoom r ON r.RealPotID = p.Real_Slot_No
+                WHERE
+                    r.PotRommID = ${potRoomId}
+                    AND r.SectionID = ${sectionId}
+            ) T
+        WHERE
+            T.num &lt;= 1
+        ORDER BY
+            T.realSlotNo ASC
+    </select>
+
+    <select id="getSlotSingleParamList" parameterType="long" resultType="com.ruoyi.industry.domain.SlotSingleParam">
+        SELECT
+            T.Machine_No AS machineNo,
+            T.Slot_No AS slotNo,
+            T.Real_Slot_No AS realSlotNo,
+            T.Set_Volt AS volt,
+            T.Set_FeedIntvl0 AS feedIntvl0,
+            T.Set_FeedIntvl1 AS feedIntvl1,
+            T.Set_AEIntvl AS aeIntvl,
+            T.Set_AlF3Mass AS alf3Mass,
+            T.Set_AlF3Intvl AS alf3Intvl,
+            T.Set_BV_Angle AS bvAngle,
+            T.Set_Current_UpLimit AS currentUpLimit,
+            T.Set_Current_DownLimit AS currentDownLimit,
+            T.SetAdaptiveSwitch AS setAdaptiveSwitch,
+            T.SetNoiseSwitch AS noiseSwitch,
+            T.SetNoiseMonSwitch AS noiseMonSwitch,
+            T.SetAECancelSwitch AS aeCancelSwitch,
+            T.SetAEQuenchSwitch AS aeQuenchSwitch,
+            T.SetAlF3Switch AS alf3Switch,
+            T.SetTemperatureSwitch AS temperatureSwitch,
+            T.SetValveSwitch AS valveSwitch,
+            T.SetOnOffLineSwitch AS onOffLineSwitch,
+            T.SetOnOffPreStaSwitch AS onOffPrestaSwitch,
+            T.Set_Electrode_Switch AS electrodeSwitch,
+            T.Set_Spare_Switch1 AS spareSwitch1,
+            T.Set_Spare_Switch2 AS spareSwitch2,
+            T.Set_Para_Spare01 AS paraSpare01
+        FROM
+            (
+            SELECT
+                p.Machine_No,
+                p.Slot_No,
+                p.Real_Slot_No,
+                p.Set_Volt,
+                p.Set_FeedIntvl0,
+                p.Set_FeedIntvl1,
+                p.Set_AEIntvl,
+                p.Set_AlF3Mass,
+                p.Set_AlF3Intvl,
+                p.Set_BV_Angle,
+                p.Set_Current_UpLimit,
+                p.Set_Current_DownLimit,
+                p.SetAdaptiveSwitch,
+                p.SetNoiseSwitch,
+                p.SetNoiseMonSwitch,
+                p.SetAECancelSwitch,
+                p.SetAEQuenchSwitch,
+                p.SetAlF3Switch,
+                p.SetTemperatureSwitch,
+                p.SetValveSwitch,
+                p.SetOnOffLineSwitch,
+                p.SetOnOffPreStaSwitch,
+                p.Set_Electrode_Switch,
+                p.Set_Spare_Switch1,
+                p.Set_Spare_Switch2,
+                p.Set_Para_Spare01,
+                ROW_NUMBER () OVER ( PARTITION BY p.Real_Slot_No ORDER BY p.Sign_Time DESC ) AS num
+            FROM
+                SlotSingleParam p
+            WHERE
+                p.Real_Slot_No in
+                <foreach item="realSlotNo" collection="realSlotNoList"  index="index" open="(" separator="," close=")">
+                    #{realSlotNo}
+                </foreach>
+            ) T
+        WHERE
+            T.num &lt;= 1
+        ORDER BY
+            T.Real_Slot_No ASC
+    </select>
+
+    <insert id="insertSlotSingleParam" parameterType="com.ruoyi.industry.domain.SlotSingleParam">
+        insert into SlotSingleParam
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="machineNo != null">Machine_No,</if>
+            <if test="slotNo != null">Slot_No,</if>
+            <if test="realSlotNo != null">Real_Slot_No,</if>
+            <if test="signTime != null">Sign_Time,</if>
+            <if test="author != null">Author,</if>
+            <if test="volt != null">Set_Volt,</if>
+            <if test="feedIntvl0 != null">Set_FeedIntvl0,</if>
+            Set_FeedIntvl1,
+            <if test="aeIntvl != null">Set_AEIntvl,</if>
+            <if test="alf3Mass != null">Set_AlF3Mass,</if>
+            <if test="alf3Intvl != null">Set_AlF3Intvl,</if>
+            Set_BV_Angle,
+            <if test="currentUpLimit != null">Set_Current_UpLimit,</if>
+            <if test="currentDownLimit != null">Set_Current_DownLimit,</if>
+            <if test="adaptiveSwitch != null">SetAdaptiveSwitch,</if>
+            <if test="noiseSwitch != null">SetNoiseSwitch,</if>
+            <if test="noiseMonSwitch != null">SetNoiseMonSwitch,</if>
+            <if test="aeCancelSwitch != null">SetAECancelSwitch,</if>
+            <if test="aeQuenchSwitch != null">SetAEQuenchSwitch,</if>
+            <if test="alf3Switch != null">SetAlF3Switch,</if>
+            <if test="temperatureSwitch != null">SetTemperatureSwitch,</if>
+            <if test="valveSwitch != null">SetValveSwitch,</if>
+            <if test="onOffLineSwitch != null">SetOnOffLineSwitch,</if>
+            <if test="onOffPrestaSwitch != null">SetOnOffPreStaSwitch,</if>
+            <if test="electrodeSwitch != null">Set_Electrode_Switch,</if>
+            <if test="spareSwitch1 != null">Set_Spare_Switch1,</if>
+            <if test="spareSwitch2 != null">Set_Spare_Switch2,</if>
+            <if test="paraSpare01 != null">Set_Para_Spare01,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="machineNo != null">#{machineNo},</if>
+            <if test="slotNo != null">#{slotNo},</if>
+            <if test="realSlotNo != null">#{realSlotNo},</if>
+            <if test="signTime != null">#{signTime},</if>
+            <if test="author != null">#{author},</if>
+            <if test="volt != null">#{volt},</if>
+            <if test="feedIntvl0 != null">#{feedIntvl0},</if>
+            100,
+            <if test="aeIntvl != null">#{aeIntvl},</if>
+            <if test="alf3Mass != null">#{alf3Mass},</if>
+            <if test="alf3Intvl != null">#{alf3Intvl},</if>
+            1000,
+            <if test="currentUpLimit != null">#{currentUpLimit},</if>
+            <if test="currentDownLimit != null">#{currentDownLimit},</if>
+            <if test="adaptiveSwitch != null">#{adaptiveSwitch},</if>
+            <if test="noiseSwitch != null">#{noiseSwitch},</if>
+            <if test="noiseMonSwitch != null">#{noiseMonSwitch},</if>
+            <if test="aeCancelSwitch != null">#{aeCancelSwitch},</if>
+            <if test="aeQuenchSwitch != null">#{aeQuenchSwitch},</if>
+            <if test="alf3Switch != null">#{alf3Switch},</if>
+            <if test="temperatureSwitch != null">#{temperatureSwitch},</if>
+            <if test="valveSwitch != null">#{valveSwitch},</if>
+            <if test="onOffLineSwitch != null">#{onOffLineSwitch},</if>
+            <if test="onOffPrestaSwitch != null">#{onOffPrestaSwitch},</if>
+            <if test="electrodeSwitch != null">#{electrodeSwitch},</if>
+            <if test="spareSwitch1 != null">#{spareSwitch1},</if>
+            <if test="spareSwitch2 != null">#{spareSwitch2},</if>
+            <if test="paraSpare01 != null">#{paraSpare01},</if>
+        </trim>
+    </insert>
+</mapper>

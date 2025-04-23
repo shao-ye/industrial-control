@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.industry.mapper.IndAeInfoMapper">
+
+    <select id="indAeInfoList" parameterType="int" resultType="com.ruoyi.industry.domain.IndAeInfo">
+        SELECT
+            T.Report_AE_Data_Serial AS reportAeDataSerial,
+            T.Real_Slot_No AS realSlotNo,
+            CONVERT(varchar(5), T.AE_Start_Time, 10) + ' ' + CONVERT(varchar(100), T.AE_Start_Time, 24) AS aeStartTime,
+            T.AE_Lasting_Time AS aeAverageVoltage,
+            T.AE_Average_Voltage AS aePeakVoltage,
+            T.AE_Peak_Voltage AS aeLastingTime,
+            T.AE_Type AS aeType,
+            T.num AS num
+        FROM
+            (
+                SELECT
+                    r.Report_AE_Data_Serial,
+                    r.Real_Slot_No,
+                    r.AE_Start_Time,
+                    r.AE_Lasting_Time,
+                    r.AE_Average_Voltage,
+                    r.AE_Peak_Voltage,
+                    r.AE_Type,
+                    ROW_NUMBER () OVER ( PARTITION BY r.Real_Slot_No ORDER BY r.AE_Start_Time DESC ) AS num
+                FROM
+                    AE_Report r
+                LEFT JOIN PotRoom a ON r.Machine_No = a.PotRommID AND r.Real_Slot_No = a.RealPotID
+                WHERE
+                    a.SectionID = ${areaNo}
+            ) T
+        WHERE
+            T.num &lt;= 5
+        ORDER BY
+            Real_Slot_No ASC
+    </select>
+</mapper>

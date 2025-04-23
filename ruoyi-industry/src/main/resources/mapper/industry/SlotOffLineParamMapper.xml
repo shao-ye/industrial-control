@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.industry.mapper.SlotOffLineParamMapper">
+
+    <resultMap type="SlotOffLineParam" id="SlotOffLineParamResult">
+        <result property="machineNo"    column="Machine_No"    />
+        <result property="slotNo"    column="Slot_No"    />
+        <result property="realSlotNo"    column="Real_Slot_No"    />
+        <result property="signTime"    column="Sign_Time"    />
+        <result property="author"    column="Author"    />
+        <result property="potBegintime"    column="Pot_BeginTime"    />
+        <result property="metalMass"    column="Metal_mass"    />
+        <result property="metalQuality"    column="Metal_Quality"    />
+        <result property="feContent"    column="Fe_Content"    />
+        <result property="siContent"    column="Si_Content"    />
+        <result property="bathRatio"    column="Bath_Ratio"    />
+        <result property="bathHeight"    column="Bath_Height"    />
+        <result property="metalHeight"    column="Metal_Height"    />
+        <result property="bathTemperature"    column="Bath_Temperature"    />
+        <result property="cvd"    column="CVD"    />
+        <result property="acd"    column="ACD"    />
+        <result property="superheat"    column="Superheat"    />
+        <result property="al2o3Concen"    column="Al2O3_Concen"    />
+        <result property="realmetalMass"    column="RealMetal_mass"    />
+    </resultMap>
+
+    <sql id="selectSlotOffLineParamVo">
+        select Machine_No, Slot_No, Real_Slot_No, Sign_Time, Author, Pot_BeginTime, Metal_mass, Metal_Quality, Fe_Content, Si_Content, Bath_Ratio, Bath_Height, Metal_Height, Bath_Temperature, CVD, ACD, Superheat, Al2O3_Concen, RealMetal_mass from SlotOffLineParam
+    </sql>
+
+    <select id="selectSlotOffLineParamList" parameterType="string" resultType="com.ruoyi.industry.domain.SlotOffLineParam">
+        SELECT
+            Machine_No AS machineNo,
+            Slot_No AS slotNo,
+            Real_Slot_No AS realSlotNo,
+            CONVERT(varchar(100), Sign_Time, 120) AS signTime,
+            Author AS author,
+            CONVERT(varchar(100), Pot_BeginTime, 120) AS potBegintime,
+            Metal_mass AS metalMass,
+            Metal_Quality AS metalQuality,
+            Fe_Content AS feContent,
+            Si_Content AS siContent,
+            Bath_Ratio AS bathRatio,
+            Bath_Height AS bathHeight,
+            Metal_Height AS metalHeight,
+            Bath_Temperature AS bathTemperature,
+            CVD AS cvd,
+            ACD AS acd,
+            Superheat AS superheat,
+            Al2O3_Concen AS al2o3Concen,
+            RealMetal_mass AS realmetalMass
+        FROM
+            SlotOffLineParam p
+        LEFT JOIN PotRoom o ON p.Machine_No = o.PotRommID AND p.Real_Slot_No = o.RealPotID
+        WHERE
+            o.SectionID = ${areaNo}
+            AND CONVERT(varchar(100), p.Sign_Time, 23) = #{signTime}
+        ORDER BY p.Slot_No ASC
+    </select>
+
+    <select id="selectSlotOffLineParamByMachineNo" parameterType="Long" resultMap="SlotOffLineParamResult">
+        <include refid="selectSlotOffLineParamVo"/>
+        where Machine_No = #{machineNo}
+    </select>
+
+    <insert id="insertSlotOffLineParam" parameterType="SlotOffLineParam">
+        insert into SlotOffLineParam
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="machineNo != null">Machine_No,</if>
+            <if test="slotNo != null">Slot_No,</if>
+            <if test="realSlotNo != null">Real_Slot_No,</if>
+            <if test="signTime != null">Sign_Time,</if>
+            <if test="author != null">Author,</if>
+            <if test="potBegintime != null">Pot_BeginTime,</if>
+            <if test="metalMass != null">Metal_mass,</if>
+            <if test="metalQuality != null">Metal_Quality,</if>
+            <if test="feContent != null">Fe_Content,</if>
+            <if test="siContent != null">Si_Content,</if>
+            <if test="bathRatio != null">Bath_Ratio,</if>
+            <if test="bathHeight != null">Bath_Height,</if>
+            <if test="metalHeight != null">Metal_Height,</if>
+            <if test="bathTemperature != null">Bath_Temperature,</if>
+            <if test="cvd != null">CVD,</if>
+            <if test="acd != null">ACD,</if>
+            <if test="superheat != null">Superheat,</if>
+            <if test="al2o3Concen != null">Al2O3_Concen,</if>
+            <if test="realmetalMass != null">RealMetal_mass,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="machineNo != null">#{machineNo},</if>
+            <if test="slotNo != null">#{slotNo},</if>
+            <if test="realSlotNo != null">#{realSlotNo},</if>
+            <if test="signTime != null">#{signTime},</if>
+            <if test="author != null">#{author},</if>
+            <if test="potBegintime != null">#{potBegintime},</if>
+            <if test="metalMass != null">#{metalMass},</if>
+            <if test="metalQuality != null">#{metalQuality},</if>
+            <if test="feContent != null">#{feContent},</if>
+            <if test="siContent != null">#{siContent},</if>
+            <if test="bathRatio != null">#{bathRatio},</if>
+            <if test="bathHeight != null">#{bathHeight},</if>
+            <if test="metalHeight != null">#{metalHeight},</if>
+            <if test="bathTemperature != null">#{bathTemperature},</if>
+            <if test="cvd != null">#{cvd},</if>
+            <if test="acd != null">#{acd},</if>
+            <if test="superheat != null">#{superheat},</if>
+            <if test="al2o3Concen != null">#{al2o3Concen},</if>
+            <if test="realmetalMass != null">#{realmetalMass},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSlotOffLineParam" parameterType="SlotOffLineParam">
+        update SlotOffLineParam
+        <trim prefix="SET" suffixOverrides=",">
+            <!--<if test="slotNo != null">Slot_No = #{slotNo},</if>
+            <if test="realSlotNo != null">Real_Slot_No = #{realSlotNo},</if>-->
+            <if test="signTime != null and signTime != ''">Sign_Time = #{signTime},</if>
+            <if test="author != null and author != ''">Author = #{author},</if>
+            <if test="potBegintime != null">Pot_BeginTime = #{potBegintime},</if>
+            <if test="metalMass != null">Metal_mass = #{metalMass},</if>
+            <if test="metalQuality != null">Metal_Quality = #{metalQuality},</if>
+            <if test="feContent != null">Fe_Content = #{feContent},</if>
+            <if test="siContent != null">Si_Content = #{siContent},</if>
+            <if test="bathRatio != null">Bath_Ratio = #{bathRatio},</if>
+            <if test="bathHeight != null">Bath_Height = #{bathHeight},</if>
+            <if test="metalHeight != null">Metal_Height = #{metalHeight},</if>
+            <if test="bathTemperature != null">Bath_Temperature = #{bathTemperature},</if>
+            <if test="cvd != null">CVD = #{cvd},</if>
+            <if test="acd != null">ACD = #{acd},</if>
+            <if test="superheat != null">Superheat = #{superheat},</if>
+            <if test="al2o3Concen != null">Al2O3_Concen = #{al2o3Concen},</if>
+            <if test="realmetalMass != null">RealMetal_mass = #{realmetalMass},</if>
+        </trim>
+        where Real_Slot_No = #{realSlotNo}
+        AND CONVERT ( VARCHAR ( 100 ), Sign_Time, 23 ) = CONVERT ( CHAR ( 10 ),#{signTime}, 23 )
+    </update>
+
+    <delete id="deleteSlotOffLineParamByMachineNo" parameterType="Long">
+        delete from SlotOffLineParam where Machine_No = #{machineNo}
+    </delete>
+
+    <delete id="deleteSlotOffLineParamByMachineNos" parameterType="String">
+        delete from SlotOffLineParam where Machine_No in
+        <foreach item="machineNo" collection="array" open="(" separator="," close=")">
+            #{machineNo}
+        </foreach>
+    </delete>
+</mapper>

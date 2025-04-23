@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.industry.mapper.IndRefreshConfigMapper">
+    
+    <resultMap type="IndRefreshConfig" id="IndRefreshConfigResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="refreshStyle"    column="refresh_style"    />
+        <result property="refreshSectionFactoryNo"    column="refresh_section_factory_no"    />
+        <result property="refreshSectionAreaNo"    column="refresh_section_area_no"    />
+        <result property="refreshPotroom"    column="refresh_potroom"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectIndRefreshConfigVo">
+        select id, user_id, refresh_style, refresh_section_factory_no, refresh_section_area_no, refresh_potroom, create_by, create_time, update_by, update_time from ind_refresh_config
+    </sql>
+
+    <select id="selectIndRefreshConfigList" parameterType="IndRefreshConfig" resultMap="IndRefreshConfigResult">
+        <include refid="selectIndRefreshConfigVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="refreshStyle != null "> and refresh_style = #{refreshStyle}</if>
+            <if test="refreshSectionFactoryNo != null "> and refresh_section_factory_no = #{refreshSectionFactoryNo}</if>
+            <if test="refreshSectionAreaNo != null "> and refresh_section_area_no = #{refreshSectionAreaNo}</if>
+            <if test="refreshPotroom != null "> and refresh_potroom = #{refreshPotroom}</if>
+        </where>
+    </select>
+    
+    <select id="selectIndRefreshConfigById" parameterType="Long" resultMap="IndRefreshConfigResult">
+        <include refid="selectIndRefreshConfigVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectIndRefreshConfigByUserId" parameterType="Long" resultMap="IndRefreshConfigResult">
+        <include refid="selectIndRefreshConfigVo"/>
+        where user_id = ${userId}
+    </select>
+
+    <insert id="insertIndRefreshConfig" parameterType="IndRefreshConfig">
+        insert into ind_refresh_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="refreshStyle != null">refresh_style,</if>
+            <if test="refreshSectionFactoryNo != null">refresh_section_factory_no,</if>
+            <if test="refreshSectionAreaNo != null">refresh_section_area_no,</if>
+            <if test="refreshPotroom != null">refresh_potroom,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="refreshStyle != null">#{refreshStyle},</if>
+            <if test="refreshSectionFactoryNo != null">#{refreshSectionFactoryNo},</if>
+            <if test="refreshSectionAreaNo != null">#{refreshSectionAreaNo},</if>
+            <if test="refreshPotroom != null">#{refreshPotroom},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateIndRefreshConfig" parameterType="IndRefreshConfig">
+        update ind_refresh_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="refreshStyle != null">refresh_style = #{refreshStyle},</if>
+            <if test="refreshSectionFactoryNo != null">refresh_section_factory_no = #{refreshSectionFactoryNo},</if>
+            <if test="refreshSectionAreaNo != null">refresh_section_area_no = #{refreshSectionAreaNo},</if>
+            <if test="refreshPotroom != null">refresh_potroom = #{refreshPotroom},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteIndRefreshConfigById" parameterType="Long">
+        delete from ind_refresh_config where id = #{id}
+    </delete>
+
+    <delete id="deleteIndRefreshConfigByIds" parameterType="String">
+        delete from ind_refresh_config where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

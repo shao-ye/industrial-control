@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.industry.mapper.IndSocketInfoMapper">
+    
+    <resultMap type="IndSocketInfo" id="IndSocketInfoResult">
+        <result property="id"    column="id"    />
+        <result property="ip"    column="ip"    />
+        <result property="port"    column="port"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectIndSocketInfoVo">
+        select id, ip, port, status, create_by, create_time, update_by, update_time from ind_socket_info
+    </sql>
+
+    <select id="selectIndSocketInfoList" parameterType="IndSocketInfo" resultMap="IndSocketInfoResult">
+        <include refid="selectIndSocketInfoVo"/>
+        <where>  
+            <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
+            <if test="port != null "> and port = #{port}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectIndSocketInfoById" parameterType="Long" resultMap="IndSocketInfoResult">
+        <include refid="selectIndSocketInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertIndSocketInfo" parameterType="IndSocketInfo">
+        insert into ind_socket_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="ip != null">ip,</if>
+            <if test="port != null">port,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="port != null">#{port},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateIndSocketInfo" parameterType="IndSocketInfo">
+        update ind_socket_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="port != null">port = #{port},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteIndSocketInfoById" parameterType="Long">
+        delete from ind_socket_info where id = #{id}
+    </delete>
+
+    <delete id="deleteIndSocketInfoByIds" parameterType="String">
+        delete from ind_socket_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

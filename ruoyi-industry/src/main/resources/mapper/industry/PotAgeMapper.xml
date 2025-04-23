@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.industry.mapper.PotAgeMapper">
+
+    <select id="selectPotAgeList" parameterType="long" resultType="com.ruoyi.industry.domain.PotAge">
+        SELECT
+            a.RealPotID AS realPotId,
+            a.PotCurrentGeneration AS potCurrentGeneration,
+            a.CurrentGenStartTime AS currentGenStartTime,
+            a.GenStartTime1 AS genStartTime1,
+            a.GenEndTime1 AS genEndTime1,
+            a.GenStartTime2 AS genStartTime2,
+            a.GenEndTime2 AS genEndTime2,
+            a.GenStartTime3 AS genStartTime3,
+            a.GenEndTime3 AS genEndTime3,
+            a.GenStartTime4 AS genStartTime4,
+            a.GenEndTime4 AS genEndTime4,
+            a.GenStartTime5 AS genStartTime5,
+            a.GenEndTime5 AS genEndTime5
+        FROM
+            PotAge a
+            LEFT JOIN PotRoom r ON r.RealPotID = a.RealPotID
+        WHERE
+            r.PotRommID = ${potRoomId}
+            AND r.SectionID = ${sectionId}
+    </select>
+
+    <update id="updatePotAge" parameterType="com.ruoyi.industry.domain.PotAge">
+        update PotAge
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="potCurrentGeneration != null">PotCurrentGeneration = #{potCurrentGeneration},</if>
+            <if test="currentGenStartTime != null">CurrentGenStartTime = #{currentGenStartTime},</if>
+            <if test="genStartTime1 != null">GenStartTime1 = #{genStartTime1},</if>
+            <if test="genEndTime1 != null">GenEndTime1 = #{genEndTime1},</if>
+            <if test="genStartTime2 != null">GenStartTime2 = #{genStartTime2},</if>
+            <if test="genEndTime2 != null">GenEndTime2 = #{genEndTime2},</if>
+            <if test="genStartTime3 != null">GenStartTime3 = #{genStartTime3},</if>
+            <if test="genEndTime3 != null">GenEndTime3 = #{genEndTime3},</if>
+            <if test="genStartTime4 != null">GenStartTime4 = #{genStartTime4},</if>
+            <if test="genEndTime4 != null">GenEndTime4 = #{genEndTime4},</if>
+            <if test="genStartTime5 != null">GenStartTime5 = #{genStartTime5},</if>
+            <if test="genEndTime5 != null">GenEndTime5 = #{genEndTime5},</if>
+        </trim>
+        where RealPotID = #{realPotId}
+    </update>
+</mapper>
